@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מטלה מתוקשבת – האלימות בחברה הערבית</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+      line-height: 1.7;
+      color: #222;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 25px auto;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #1f3a5f;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 20px;
+      color: #444;
+      margin-top: 0;
+      margin-bottom: 25px;
+    }
+
+    .instructions {
+      background: #eaf3ff;
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border-right: 5px solid #2b78c5;
+    }
+
+    .cover-page {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .student-details {
+      margin-bottom: 20px;
+      background: #f7f7f7;
+      padding: 22px;
+      border-radius: 10px;
+      border-right: 5px solid #777;
+    }
+
+    .student-details h2 {
+      margin-top: 0;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(250px, 1fr));
+      gap: 15px;
+    }
+
+    .field label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    input[type="text"], select {
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 16px;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .error-message {
+      display: none;
+      margin-top: 12px;
+      background: #fff3cd;
+      color: #856404;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 430px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .questions-panel {
+      grid-column: 1;
+    }
+
+    .reading-panel {
+      grid-column: 2;
+      position: sticky;
+      top: 15px;
+      max-height: calc(100vh - 30px);
+      overflow-y: auto;
+    }
+
+    .text-box {
+      background: #fff8e6;
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+      border-right: 5px solid #d49b00;
+    }
+
+    .text-box p {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .tooltip-word {
+      font-weight: bold;
+      color: #0b5cad;
+      border-bottom: 2px dotted #0b5cad;
+      cursor: help;
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip-word::after {
+      content: attr(data-meaning);
+      position: absolute;
+      bottom: 125%;
+      right: 0;
+      background: #1f3a5f;
+      color: white;
+      padding: 8px 10px;
+      border-radius: 8px;
+      width: max-content;
+      min-width: 120px;
+      max-width: 260px;
+      font-size: 15px;
+      line-height: 1.4;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 50;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+      white-space: normal;
+    }
+
+    .tooltip-word:hover::after,
+    .tooltip-word:focus::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tooltip-note {
+      background: #eefaf1;
+      border-right: 5px solid #2e8b57;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 14px;
+    }
+
+    .question-page {
+      display: none;
+      background: #f9f9f9;
+      padding: 20px;
+      margin-bottom: 18px;
+      border-radius: 10px;
+      border-right: 4px solid #999;
+      min-height: 360px;
+    }
+
+    .question-page.active {
+      display: block;
+    }
+
+    .question-page h3 {
+      margin-top: 0;
+      color: #333;
+      font-size: 21px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    input[type="radio"] {
+      margin-left: 7px;
+      transform: scale(1.1);
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    button {
+      display: inline-block;
+      padding: 12px 26px;
+      font-size: 18px;
+      background: #1f7a4d;
+      color: #ffffff;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #155c39;
+    }
+
+    button.secondary {
+      background: #555;
+    }
+
+    button.secondary:hover {
+      background: #333;
+    }
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    .progress {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 16px;
+      background: #eaf3ff;
+      padding: 10px;
+      border-radius: 10px;
+      color: #1f3a5f;
+    }
+
+    #result {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 25px;
+      padding: 18px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .note {
+      background: #fff3cd;
+      color: #856404;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 15px;
+      font-size: 16px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .reading-panel,
+      .questions-panel {
+        grid-column: 1;
+      }
+
+      .reading-panel {
+        position: static;
+        max-height: none;
+        overflow-y: visible;
+      }
+
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        margin: 10px;
+        padding: 18px;
+      }
+
+      .nav-buttons {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>מטלה מתוקשבת – הבנת הנקרא</h1>
+    <p class="subtitle">האלימות בחברה הערבית</p>
+
+    <section id="coverPage" class="cover-page">
+      <div class="instructions">
+        <h2>הוראות לתלמידים</h2>
+        <p>קראו את הקטע וענו על כל השאלות.</p>
+        <p>בכל שאלה יש לבחור תשובה אחת נכונה בלבד.</p>
+        <p>לכל שאלה <strong>0.5 נקודות</strong>.</p>
+        <p>סה״כ המטלה: <strong>5 נקודות</strong>.</p>
+        <p>יש למלא את כל הפרטים האישיים לפני המעבר למטלה.</p>
+        <p>במהלך הקריאה אפשר להצביע עם העכבר על מילים מסומנות כדי לראות את פירושן בערבית.</p>
+        <p>בסיום לחצו על הכפתור <strong>שליחת המטלה</strong>. לאחר השליחה יוצג הציון בלבד.</p>
+        <p><strong>שימו לב:</strong> ניתן לשלוח את המטלה פעם אחת בלבד מאותו מכשיר ולפי מספר תעודת הזהות.</p>
+      </div>
+
+      <div class="student-details">
+        <h2>פרטים אישיים</h2>
+        <div class="details-grid">
+          <div class="field">
+            <label for="studentName">שם התלמיד/ה בעברית:</label>
+            <input type="text" id="studentName" placeholder="לדוגמה: מוחמד אחמד" oninput="validateStudentDetails()">
+          </div>
+
+          <div class="field">
+            <label for="studentId">תעודת זהות:</label>
+            <input type="text" id="studentId" placeholder="הקלידו 9 ספרות" maxlength="9" inputmode="numeric" oninput="validateStudentDetails()">
+          </div>
+
+          <div class="field">
+            <label for="teacherName">שם המורה:</label>
+            <select id="teacherName" onchange="validateStudentDetails()">
+              <option value="">בחרו מורה</option>
+              <option value="עביר ביאדסה">עביר ביאדסה</option>
+              <option value="עדן מסארווה">עדן מסארווה</option>
+              <option value="נורא עתאמנה">נורא עתאמנה</option>
+              <option value="בסמה גנאיים">בסמה גנאיים</option>
+              <option value="יוסרא חשאן">יוסרא חשאן</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="className">כיתה:</label>
+            <select id="className" onchange="validateStudentDetails()">
+              <option value="">בחרו כיתה</option>
+              <option value="י 1">י 1</option>
+              <option value="י 2">י 2</option>
+              <option value="י 3">י 3</option>
+              <option value="י 4">י 4</option>
+              <option value="י 5">י 5</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="detailsError" class="error-message">
+          יש למלא שם בעברית, תעודת זהות תקינה, שם מורה וכיתה כדי לעבור למטלה.
+        </div>
+      </div>
+
+      <div style="text-align:center;">
+        <button type="button" onclick="startAssignment()">התחלת המטלה</button>
+      </div>
+    </section>
+
+    <section id="assignmentPage" class="hidden">
+      <div class="main-layout">
+        <div class="questions-panel">
+          <div id="progress" class="progress">שאלה 1 מתוך 10</div>
+
+          <form id="quizForm">
+            <div class="question-page active" data-question="1">
+              <h3>שאלה 1: מהו הנושא המרכזי של הקטע?</h3>
+              <label><input type="radio" name="q1" value="a"> א. הצלחת התלמידים בבתי הספר</label>
+              <label><input type="radio" name="q1" value="b"> ב. האלימות בחברה הערבית והדרכים להתמודד איתה</label>
+              <label><input type="radio" name="q1" value="c"> ג. פעילויות ספורט בחברה הערבית</label>
+              <label><input type="radio" name="q1" value="d"> ד. חשיבות הטיולים במקומות ציבוריים</label>
+            </div>
+
+            <div class="question-page" data-question="2">
+              <h3>שאלה 2: לפי הקטע, כיצד האלימות משפיעה על התושבים?</h3>
+              <label><input type="radio" name="q2" value="a"> א. היא גורמת להם להרגיש ביטחון רב יותר</label>
+              <label><input type="radio" name="q2" value="b"> ב. היא פוגעת בביטחון האישי שלהם</label>
+              <label><input type="radio" name="q2" value="c"> ג. היא מעודדת אותם לצאת יותר מהבית</label>
+              <label><input type="radio" name="q2" value="d"> ד. היא אינה משפיעה על חיי היום־יום</label>
+            </div>
+
+            <div class="question-page" data-question="3">
+              <h3>שאלה 3: במשפט: "אלימות זו פוגעת בביטחון האישי של התושבים" — למה מתייחסת המילה "זו"?</h3>
+              <label><input type="radio" name="q3" value="a"> א. לחברה הערבית</label>
+              <label><input type="radio" name="q3" value="b"> ב. לאלימות</label>
+              <label><input type="radio" name="q3" value="c"> ג. לביטחון האישי</label>
+              <label><input type="radio" name="q3" value="d"> ד. לשנים האחרונות</label>
+            </div>
+
+            <div class="question-page" data-question="4">
+              <h3>שאלה 4: במשפט: "ומשפיעה על חיי היום־יום שלהם" — למי מתייחסת המילה "שלהם"?</h3>
+              <label><input type="radio" name="q4" value="a"> א. למורים</label>
+              <label><input type="radio" name="q4" value="b"> ב. לתושבים</label>
+              <label><input type="radio" name="q4" value="c"> ג. לצעירים</label>
+              <label><input type="radio" name="q4" value="d"> ד. למנהיגים המקומיים</label>
+            </div>
+
+            <div class="question-page" data-question="5">
+              <h3>שאלה 5: במשפט: "עם זאת, רבים בחברה הערבית פועלים כדי לשנות את המצב" — מה תפקידה של מילת הקישור "עם זאת"?</h3>
+              <label><input type="radio" name="q5" value="a"> א. הוספה</label>
+              <label><input type="radio" name="q5" value="b"> ב. סיבה</label>
+              <label><input type="radio" name="q5" value="c"> ג. ניגוד או הסתייגות</label>
+              <label><input type="radio" name="q5" value="d"> ד. זמן</label>
+            </div>
+
+            <div class="question-page" data-question="6">
+              <h3>שאלה 6: במשפט: "בנוסף, יש חשיבות רבה לשיתוף פעולה" — מה תפקידה של מילת הקישור "בנוסף"?</h3>
+              <label><input type="radio" name="q6" value="a"> א. ניגוד</label>
+              <label><input type="radio" name="q6" value="b"> ב. הוספה</label>
+              <label><input type="radio" name="q6" value="c"> ג. תוצאה</label>
+              <label><input type="radio" name="q6" value="d"> ד. סיבה</label>
+            </div>
+
+            <div class="question-page" data-question="7">
+              <h3>שאלה 7: מה פירוש המילה "הסברה" בקטע?</h3>
+              <label><input type="radio" name="q7" value="a"> א. פעילות שמטרתה להסביר ולהעלות מודעות</label>
+              <label><input type="radio" name="q7" value="b"> ב. משחק קבוצתי</label>
+              <label><input type="radio" name="q7" value="c"> ג. עונש בבית הספר</label>
+              <label><input type="radio" name="q7" value="d"> ד. יציאה לטיול</label>
+            </div>
+
+            <div class="question-page" data-question="8">
+              <h3>שאלה 8: מהו ההפך של המילה "פחד"?</h3>
+              <label><input type="radio" name="q8" value="a"> א. דאגה</label>
+              <label><input type="radio" name="q8" value="b"> ב. כעס</label>
+              <label><input type="radio" name="q8" value="c"> ג. ביטחון</label>
+              <label><input type="radio" name="q8" value="d"> ד. עצב</label>
+            </div>
+
+            <div class="question-page" data-question="9">
+              <h3>שאלה 9: השלימו לפי הקטע: רק באמצעות חינוך, אחריות ו______ אפשר לבנות חברה בטוחה יותר לכל התושבים.</h3>
+              <label><input type="radio" name="q9" value="a"> א. משחקים</label>
+              <label><input type="radio" name="q9" value="b"> ב. שיח מכבד</label>
+              <label><input type="radio" name="q9" value="c"> ג. פחד</label>
+              <label><input type="radio" name="q9" value="d"> ד. מקומות ציבוריים</label>
+            </div>
+
+            <div class="question-page" data-question="10">
+              <h3>שאלה 10: לפי הקטע, האם רק המשטרה אחראית לפתרון בעיית האלימות?</h3>
+              <label><input type="radio" name="q10" value="a"> א. כן, כי בקטע כתוב שהמשטרה היא הגורם היחיד שיכול לפתור את הבעיה.</label>
+              <label><input type="radio" name="q10" value="b"> ב. כן, כי בתי הספר והמשפחות אינם קשורים לנושא.</label>
+              <label><input type="radio" name="q10" value="c"> ג. לא, כי בקטע כתוב שיש חשיבות לשיתוף פעולה בין המשטרה, בתי הספר, הרשויות המקומיות והמשפחות.</label>
+              <label><input type="radio" name="q10" value="d"> ד. לא, כי הקטע עוסק רק בפחד של הילדים.</label>
+            </div>
+
+            <div id="questionError" class="error-message">יש לבחור תשובה לפני המעבר לשאלה הבאה.</div>
+
+            <div class="nav-buttons">
+              <button type="button" class="secondary" id="prevBtn" onclick="previousQuestion()">הקודם</button>
+              <button type="button" id="nextBtn" onclick="nextQuestion()">הבא</button>
+              <button type="button" id="submitBtn" onclick="submitAssignment()" class="hidden">שליחת המטלה</button>
+            </div>
+          </form>
+
+          <div id="result"></div>
+        </div>
+
+        <aside class="reading-panel">
+          <div class="text-box">
+            <h2>הקטע</h2>
+            <p>
+              בשנים האחרונות
+              <span class="tooltip-word" tabindex="0" data-meaning="تزداد / تتزايد">גוברת</span>
+              ה<span class="tooltip-word" tabindex="0" data-meaning="قلق أو خوف">דאגה</span>
+              מהאלימות בחברה הערבית. אלימות זו פוגעת ב<span class="tooltip-word" tabindex="0" data-meaning="الشعور بالأمان الشخصي">ביטחון האישי</span>
+              של התושבים ומשפיעה על
+              <span class="tooltip-word" tabindex="0" data-meaning="الحياة اليومية العادية">חיי היום־יום</span>
+              שלהם. משפחות רבות מרגישות פחד כאשר הן שולחות את ילדיהן לבית הספר או כאשר הן יוצאות ל<span class="tooltip-word" tabindex="0" data-meaning="أماكن عامة">מקומות ציבוריים</span>.
+              <span class="tooltip-word" tabindex="0" data-meaning="مع ذلك / رغم ذلك">עם זאת</span>,
+              רבים בחברה הערבית פועלים כדי לשנות את המצב. מנהיגים מקומיים, מורים, הורים וצעירים משתתפים בפעילויות
+              <span class="tooltip-word" tabindex="0" data-meaning="توعية وشرح">הסברה</span>
+              וקוראים לפתרון
+              <span class="tooltip-word" tabindex="0" data-meaning="خلافات أو نزاعات">סכסוכים</span>
+              ב<span class="tooltip-word" tabindex="0" data-meaning="طرق سلمية">דרכי שלום</span>.
+              בנוסף, יש חשיבות רבה לשיתוף פעולה בין המשטרה, בתי הספר, הרשויות המקומיות והמשפחות.
+              רק באמצעות חינוך, אחריות ו<span class="tooltip-word" tabindex="0" data-meaning="حوار محترم">שיח מכבד</span>
+              אפשר לבנות חברה בטוחה יותר לכל התושבים.
+            </p>
+            <div class="tooltip-note">
+              <strong>עזרה במילים:</strong> הצביעו עם העכבר על המילים המסומנות בכחול כדי לראות פירוש בערבית.
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="note">
+        <strong>הערה למורה:</strong> הקוד לא מציג לתלמיד/ה את התשובות הנכונות. הציון נשלח ל־Google Sheets רק אם הודבק קישור Web App תקין בשורה <strong>WEB_APP_URL</strong>.
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const answers = {
+      q1: "b",
+      q2: "b",
+      q3: "b",
+      q4: "b",
+      q5: "c",
+      q6: "b",
+      q7: "a",
+      q8: "c",
+      q9: "b",
+      q10: "c"
+    };
+
+    const totalQuestions = 10;
+    const pointsPerQuestion = 0.5;
+    let currentQuestion = 1;
+
+    /*
+      חשוב:
+      כאן צריך להדביק את קישור ה-Web App של Google Apps Script.
+      דוגמה:
+      const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4-b7N6WgSRcJ--sDVMPDw8QMui0uFvuDIl7RFp3ydVTuEUvpEyjkSmbb0DuV_ZVF9yg/exec";
+    */
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4-b7N6WgSRcJ--sDVMPDw8QMui0uFvuDIl7RFp3ydVTuEUvpEyjkSmbb0DuV_ZVF9yg/exec";
+
+    function hasOnlyHebrewName(name) {
+      return /^[א-ת ׳' -]{2,}$/.test(name.trim());
+    }
+
+    function isValidId(id) {
+      return /^[0-9]{9}$/.test(id.trim());
+    }
+
+    function getStudentData() {
+      return {
+        name: document.getElementById("studentName").value.trim(),
+        id: document.getElementById("studentId").value.trim(),
+        teacher: document.getElementById("teacherName").value,
+        className: document.getElementById("className").value
+      };
+    }
+
+    function getSubmissionKey(id) {
+      return "submitted_assignment_violence_" + id;
+    }
+
+    function validateStudentDetails() {
+      const data = getStudentData();
+      const detailsError = document.getElementById("detailsError");
+
+      document.getElementById("studentId").value = data.id.replace(/[^0-9]/g, "").slice(0, 9);
+      const cleanId = document.getElementById("studentId").value;
+
+      const valid =
+        hasOnlyHebrewName(data.name) &&
+        isValidId(cleanId) &&
+        data.teacher !== "" &&
+        data.className !== "";
+
+      if (!valid) {
+        detailsError.style.display = "block";
+        detailsError.innerHTML = "יש למלא שם בעברית, תעודת זהות תקינה, שם מורה וכיתה כדי לעבור למטלה.";
+        return false;
+      }
+
+      if (localStorage.getItem(getSubmissionKey(cleanId)) === "true") {
+        detailsError.style.display = "block";
+        detailsError.innerHTML = "כבר שלחת את המטלה מהמכשיר הזה. לא ניתן לענות פעם נוספת.";
+        return false;
+      }
+
+      detailsError.style.display = "none";
+      return true;
+    }
+
+    function startAssignment() {
+      if (!validateStudentDetails()) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+
+      document.getElementById("coverPage").classList.add("hidden");
+      document.getElementById("assignmentPage").classList.remove("hidden");
+      showQuestion(1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showQuestion(number) {
+      currentQuestion = number;
+
+      document.querySelectorAll(".question-page").forEach(function(page) {
+        page.classList.remove("active");
+      });
+
+      document.querySelector('.question-page[data-question="' + number + '"]').classList.add("active");
+      document.getElementById("progress").innerHTML = "שאלה " + number + " מתוך " + totalQuestions;
+      document.getElementById("questionError").style.display = "none";
+
+      document.getElementById("prevBtn").disabled = number === 1;
+
+      if (number === totalQuestions) {
+        document.getElementById("nextBtn").classList.add("hidden");
+        document.getElementById("submitBtn").classList.remove("hidden");
+      } else {
+        document.getElementById("nextBtn").classList.remove("hidden");
+        document.getElementById("submitBtn").classList.add("hidden");
+      }
+    }
+
+    function currentQuestionAnswered() {
+      const selected = document.querySelector('input[name="q' + currentQuestion + '"]:checked');
+      return !!selected;
+    }
+
+    function nextQuestion() {
+      if (!currentQuestionAnswered()) {
+        document.getElementById("questionError").style.display = "block";
+        return;
+      }
+
+      if (currentQuestion < totalQuestions) {
+        showQuestion(currentQuestion + 1);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    function previousQuestion() {
+      if (currentQuestion > 1) {
+        showQuestion(currentQuestion - 1);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    function sendGradeToGoogleSheets(data, cleanId, score) {
+      if (!WEB_APP_URL) {
+        console.log("Google Sheets URL is not configured yet.");
+        return;
+      }
+
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({
+          studentName: data.name,
+          studentId: cleanId,
+          teacherName: data.teacher,
+          className: data.className,
+          score: score,
+          total: 5,
+          submittedAt: new Date().toISOString()
+        })
+      }).catch(function(error) {
+        console.log("Error sending grade:", error);
+      });
+    }
+
+    function submitAssignment() {
+      if (!currentQuestionAnswered()) {
+        document.getElementById("questionError").style.display = "block";
+        return;
+      }
+
+      const data = getStudentData();
+      const cleanId = document.getElementById("studentId").value;
+      const resultDiv = document.getElementById("result");
+      let score = 0;
+      let unanswered = 0;
+
+      for (let q in answers) {
+        const selected = document.querySelector('input[name="' + q + '"]:checked');
+        if (!selected) {
+          unanswered++;
+        } else if (selected.value === answers[q]) {
+          score += pointsPerQuestion;
+        }
+      }
+
+      resultDiv.style.display = "block";
+
+      if (unanswered > 0) {
+        resultDiv.style.background = "#fff3cd";
+        resultDiv.style.color = "#856404";
+        resultDiv.innerHTML = "יש לענות על כל השאלות לפני שליחת המטלה. נשארו " + unanswered + " שאלות ללא תשובה.";
+        return;
+      }
+
+      sendGradeToGoogleSheets(data, cleanId, score);
+      localStorage.setItem(getSubmissionKey(cleanId), "true");
+
+      document.querySelectorAll("input, select, button").forEach(function(element) {
+        element.disabled = true;
+      });
+
+      resultDiv.style.background = "#e8f5e9";
+      resultDiv.style.color = "#1b5e20";
+      resultDiv.innerHTML =
+        "המטלה נשלחה בהצלחה.<br>" +
+        "שם התלמיד/ה: " + data.name + "<br>" +
+        "כיתה: " + data.className + "<br>" +
+        "שם המורה: " + data.teacher + "<br>" +
+        "הציון שלך הוא: " + score + " מתוך 5 נקודות.";
+    }
+
+    window.addEventListener("load", validateStudentDetails);
+  </script>
+</body>
+</html>
